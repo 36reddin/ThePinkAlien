@@ -1,0 +1,47 @@
+[
+  {
+    "id": "bento-box",
+    "name": "Bento Box",
+    "src": "images/containers/bento-box.jpeg",
+    "weight": "1lb.",
+    "price": 20.00,
+    "maxPicks": 6,
+    "includeSides": true
+  },
+  {
+    "id": "ramen-bowl",
+    "name": "Ramen Bowl",
+    "src": "images/containers/ramen-bowl.jpeg",
+    "weight": "1lb.",
+    "price": 20.00,
+    "maxPicks": 6,
+    "includeSides": true
+  },
+  {
+    "id": "green-bag",
+    "name": "Green Bag",
+    "src": "images/containers/green-bag.jpeg",
+    "weight": "2lb.",
+    "price": 34.00,
+    "maxPicks": 12,
+    "includeSides": false
+  },
+  {
+    "id": "claw-machine-bag",
+    "name": "Claw Machine Bag",
+    "src": "images/containers/claw-machine-bag.jpeg",
+    "weight": "1lb.",
+    "price": 17.00,
+    "maxPicks": 6,
+    "includeSides": false
+  },
+  {
+    "id": "silver-bag",
+    "name": "Silver Bag",
+    "src": "images/containers/silver-bag.jpeg",
+    "weight": "1/2lb.",
+    "price": 10.00,
+    "maxPicks": 3,
+    "includeSides": false
+  }
+]
