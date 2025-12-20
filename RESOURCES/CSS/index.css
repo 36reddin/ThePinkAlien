@@ -1,0 +1,165 @@
+/* General body styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+
+    background-image: url("../../images/alienbg.jpg"); /* point to repo-root images/alienbg.jpg */
+    background-size: 100% auto; /* The width fits the viewport; height adjusts */
+    background-repeat: no-repeat; /* No tiling */
+    background-position: center top; /* Centers the image horizontally */
+    background-attachment: scroll; /* Scrolls with the page */
+}
+
+/* <uniquifier>: Use a unique and descriptive class name
+ <weight>: Use a value from 400 to 900 */
+
+.orbitron-title {
+  font-family: "Orbitron", serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  color: rgb(255, 20, 147) !important; /* Hot pink color for title */
+}
+
+.orbitron-story {
+    font-family: "Orbitron", serif;
+    font-optical-sizing: auto;
+    font-weight: 2rem;
+    font-style: normal;
+    color: rgb(255, 105, 180) !important; /* Light pink color */
+}
+
+.center-box {
+    width: 70%; /* Adjust the width of the box */
+    margin: 0 auto; /* Centers the box itself horizontally on the page */
+    padding: 20px; /* Adds space inside the box around the text */
+    border: 2px transparent #ccc; /* Optional: Adds a border for visibility */
+    text-align: center; /* Centers text horizontally */
+    display: flex; /* Flexbox for vertical alignment */
+    align-items: center; /* Centers text vertically */
+    justify-content: center; /* Ensures text is horizontally centered */
+    height: 1000px; /* Adjust height of the box */
+    background-color: rgba(15, 9, 9, 0.7); /* White background with 70% opacity */
+    border: 2px solid rgba(255, 0, 128, 0.5); /* Neon border */
+}
+
+header {
+    background: rgba(0, 0, 0, 0.8); /* Darker background for header */
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(255, 20, 147, 0.5); /* Pink shadow effect */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: #ff1493; /* Deep pink color */
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #ff69b4; /* Hot pink text color */
+    padding: 8px 12px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #fff;
+    background: #ff69b4; /* Hot pink background */
+    border-color: #ff69b4; /* Border matches background */
+    border-radius: 5px;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 60px 20px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 20, 147, 0.5); /* Neon border */
+}
+
+.hero h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #ff69b4; /* Hot pink color */
+    text-shadow: 0 0 10px #ff69b4; /* Neon glow */
+}
+
+.hero p {
+    font-size: 1.2rem;
+}
+
+/* Product Section */
+.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.8); /* Darker background */
+    border: 2px solid rgba(255, 105, 180, 0.5); /* Neon pink border */
+}
+
+.product {
+    text-align: center;
+    padding: 15px;
+    border: 2px solid rgba(255, 0, 128, 0.5); /* Neon border */
+    border-radius: 5px;
+    background: rgba(15, 15, 15, 0.9); /* Slightly darker background */
+    box-shadow: 0 2px 10px rgba(255, 0, 128, 0.3); /* Subtle glow */
+}
+
+.product img {
+    width: 100%;
+    height: 66%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 2px solid rgba(255, 0, 128, 0.3); /* Subtle border for images */
+}
+
+.product h3 {
+    font-size: 1.2rem;
+    color: #ff69b4; /* Hot pink color */
+    margin: 0;
+    text-shadow: 0 0 5px #ff69b4; /* Neon glow */
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8); /* Dark background */
+    color: #ff69b4; /* Neon pink text */
+    font-size: 0.9rem;
+    box-shadow: 0 -2px 10px rgba(255, 20, 147, 0.5); /* Subtle shadow */
+}
+
+/* Neon Sign Styles */
+.neontext {
+    color: #ff00b3;
+    text-shadow:
+      0 0 7px #fff,
+      0 0 10px #fff,
+      0 0 21px #fff,
+      /*WHITE GLOW ^^^ */
+      0 0 42px rgb(255, 0, 128),
+      0 0 82px rgb(255, 0, 128),
+      0 0 92px rgb(255, 0, 128),
+      0 0 102px rgb(255, 0, 128),
+      0 0 151px rgb(255, 0, 128);
+      /*COLOR GLOW ^^^ 
+      Need all these shadows so that they can be stacked over one another to add more depth to the glow. 
+      If we had used a single text-shadow instead, 
+      the effect would not have the depth required to make it look realistic.*/
+}

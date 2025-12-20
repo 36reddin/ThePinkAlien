@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Pink Alien — Build a Box</title>
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="RESOURCES/CSS/boxmaker.css" />
+
+  <!-- Small page-specific tweaks (optional). Keep this short. -->
+  <style>
+    :root { --accent: #ff69b4; }
+    html, body { height: 100%; }
+    body {
+      font-family: system-ui, Arial, Helvetica, sans-serif;
+      background: #07071a;
+      color: #fff;
+      margin: 0;
+    }
+    .page-wrap { min-height: 100%; display: flex; flex-direction: column; }
+    header { padding: 24px; text-align: center; }
+    .title { font-weight: 700; color: #ffd6e8; margin-top: 10px; }
+    main { flex: 1; padding: 18px 20px 40px; }
+  </style>
+</head>
+
+<body>
+  <div class="page-wrap">
+    <header>
+      <!-- IMPORTANT: boxmaker.js animates toward this ID -->
+      <img
+        id="spaceship-cart"
+        src="images/mothership.jpg"
+        alt="Mothership"
+        style="width:420px;max-width:86%;height:auto;display:block;margin:0 auto"
+      />
+      <div class="title">The Pink Alien — Build Your Snack Box</div>
+    </header>
+
+    <main>
+      <!-- IMPORTANT: boxmaker-render.js injects .snack-item cards into this element -->
+      <div class="snack-grid-container">
+        <div class="neon-grid-overlay" aria-hidden="true"></div>
+        <div id="snack-grid" class="snack-grid" aria-label="Products grid"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- IMPORTANT: load boxmaker.js first (defines window.boxmakerInit),
+       then boxmaker-render.js (renders and calls window.boxmakerInit()) -->
+  <script src="RESOURCES/JS/boxmaker.js" defer></script>
+  <script src="RESOURCES/JS/boxmaker-render.js" defer></script>
+</body>
+</html>

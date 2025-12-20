@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Box Maker — Admin Editor</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:16px}
+    header{display:flex;align-items:center;gap:12px}
+    #product-list{list-style:none;padding:0;margin:16px 0;max-width:960px}
+    .prod{display:flex;align-items:center;gap:12px;padding:8px;border:1px solid #ddd;margin-bottom:8px;background:#fff}
+    .handle{cursor:grab;padding:8px;background:#f5f5f5;border-radius:4px}
+    img.thumb{width:64px;height:64px;object-fit:cover;border-radius:6px}
+    input.name,input.price{padding:6px;border:1px solid #ccc;border-radius:4px}
+    .spacer{flex:1}
+    button.small{padding:6px 10px}
+    footer{margin-top:20px}
+    .controls{display:flex;gap:8px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Box Maker — Admin Editor</h1>
+    <div class="spacer"></div>
+    <div class="controls">
+      <button id="add-product">Add</button>
+      <button id="save-json">Download JSON</button>
+      <button id="save-html">Download Updated HTML</button>
+    </div>
+  </header>
+
+  <main>
+    <ul id="product-list" aria-live="polite"></ul>
+  </main>
+
+  <template id="prod-tpl">
+    <li class="prod" draggable="true">
+      <div class="handle">≡</div>
+      <img class="thumb" src="" alt="">
+      <input class="name" placeholder="Product name">
+      <input class="price" placeholder="Price">
+      <div class="spacer"></div>
+      <button class="remove small">Remove</button>
+    </li>
+  </template>
+
+  <script src="RESOURCES/JS/admin.js"></script>
+</body>
+</html>
