@@ -32,14 +32,14 @@ const DEFAULT_PRICE = 17.00; // change later
         }
 
         const html = (products || []).map(prod => {
-            // Normalize image paths: many product src values point to RESOURCES/IMAGES/Products/... in data
+            // Normalize image paths: many product src values point to RESOURCES/images/Products/... in data
             let src = prod.src || '';
-            if (src.startsWith('RESOURCES/IMAGES/')) {
-                // map to repo-root IMAGES/ path
-                src = src.replace(/^RESOURCES\/IMAGES\//, 'IMAGES/');
+            if (src.startsWith('RESOURCES/images/')) {
+                // map to repo-root images/ path
+                src = src.replace(/^RESOURCES\/images\//, 'images/');
             }
-            // if path contains /Products/ ensure it still points to that folder under IMAGES
-            src = src.replace('RESOURCES/IMAGES', 'IMAGES');
+            // if path contains /Products/ ensure it still points to that folder under images
+            src = src.replace('RESOURCES/images', 'images');
 
             return `
             <div class="snack-item" data-id="${prod.id}">
