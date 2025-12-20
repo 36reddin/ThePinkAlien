@@ -39,6 +39,28 @@
     </header>
 
     <main>
+            <!-- Container picker / summary bar -->
+      <div class="container-bar">
+        <label class="container-label" for="container-select">Choose your container:</label>
+        <select id="container-select" class="container-select"></select>
+
+        <div class="container-summary">
+          Picks: <span id="picks-count">0</span>/<span id="picks-max">12</span>
+          <span class="hint">(click candy to add • click a pick to remove)</span>
+        </div>
+      </div>
+
+      <!-- Scrollable candy grid area -->
+      <div class="snack-grid-container">
+        <div class="neon-grid-overlay" aria-hidden="true"></div>
+        <div id="snack-grid" class="snack-grid" aria-label="Products grid"></div>
+      </div>
+
+      <!-- Sticky picks tray -->
+      <section class="picks-dock" aria-label="Your picks">
+        <div id="picks-tray" class="picks-tray"></div>
+      </section>
+
       <!-- IMPORTANT: boxmaker-render.js injects .snack-item cards into this element -->
       <div class="snack-grid-container">
         <div class="neon-grid-overlay" aria-hidden="true"></div>

@@ -127,3 +127,146 @@ header {
 .bounce-effect {
     animation: bounce 0.3s ease-in-out;
 }
+
+/* Make main area accommodate sticky dock */
+main {
+  padding: 18px 20px 40px;
+  padding-bottom: 190px; /* space for the dock */
+}
+
+/* Container bar */
+.container-bar{
+  max-width:1200px;
+  margin: 0 auto 14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 12px;
+  align-items:center;
+  justify-content:space-between;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,105,180,0.25);
+}
+.container-label{font-weight:600}
+.container-select{
+  min-width: 320px;
+  max-width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,105,180,0.35);
+  background: #0b0b22;
+  color: #fff;
+}
+.container-summary{
+  font-size: 0.95rem;
+  color:#ffd6e8;
+}
+.container-summary .hint{
+  opacity:0.85;
+  margin-left:10px;
+  font-size:0.85rem;
+}
+
+/* IMPORTANT: snack cards are now buttons */
+.snack-item{
+  appearance:none;
+  border:none;
+  cursor:pointer;
+  text-align:left;
+}
+.snack-item:focus{
+  outline: 2px solid rgba(255,105,180,0.7);
+  outline-offset: 2px;
+}
+
+/* Remove old controls block visuals */
+.controls, .quantity { display:none !important; }
+
+/* Sticky bottom dock (your “12 option boxes”) */
+.picks-dock{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 14px 16px;
+  background: rgba(7,7,26,0.92);
+  border-top: 1px solid rgba(255,105,180,0.25);
+  backdrop-filter: blur(8px);
+  z-index: 50;
+}
+
+.picks-tray{
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(120px, 1fr);
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.pick-slot{
+  height: 130px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,105,180,0.35);
+  background: rgba(0,0,0,0.25);
+  color:#fff;
+  position: relative;
+  cursor: pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 10px;
+}
+.pick-slot.filled{
+  border-color: rgba(255,105,180,0.7);
+}
+.pick-slot img{
+  width: 100%;
+  height: 78px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.slot-label{
+  position:absolute;
+  left:10px;
+  right:34px;
+  bottom:10px;
+  font-size: 0.78rem;
+  line-height: 1.1;
+  color:#ffd6e8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slot-x{
+  position:absolute;
+  right:10px;
+  bottom:8px;
+  width:24px;
+  height:24px;
+  border-radius: 999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(233,69,96,0.9);
+  font-weight: 800;
+}
+.slot-empty{
+  opacity:0.7;
+  font-size: 0.9rem;
+}
+
+/* little “full” feedback */
+.tray-nudge{
+  animation: trayNudge 0.28s ease-in-out;
+}
+@keyframes trayNudge{
+  0%{ transform: translateY(0); }
+  30%{ transform: translateY(-6px); }
+  60%{ transform: translateY(0); }
+  85%{ transform: translateY(-3px); }
+  100%{ transform: translateY(0); }
+}
