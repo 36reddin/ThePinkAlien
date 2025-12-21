@@ -1,154 +1,79 @@
-/* === General Styles === */
+/* =========================
+   Base / Page Layout
+========================= */
+:root {
+  --accent: #ff69b4;
+  --bg: #07071a;
+  --panel: rgba(0,0,0,0.25);
+  --panel-2: rgba(0,0,0,0.35);
+  --text: #ffffff;
+  --muted: #ffd6e8;
+}
+
+html, body { height: 100%; margin: 0; }
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #1a1a2e;
-    color: #e0e0e0;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    position: relative;
+  font-family: system-ui, Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  text-align: center;
 }
 
-/* === Header === */
+.page-wrap {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  padding: 18px 20px 40px;
+  padding-bottom: 190px; /* space for sticky dock */
+}
+
+/* =========================
+   Header
+========================= */
 header {
-    background-color: #0f3460;
-    padding: 20px;
-    position: relative;
+  background-color: #0f3460;
+  padding: 24px;
+  text-align: center;
 }
 
-/* === Spaceship Cart === */
-#spaceship-cart-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
+.title {
+  font-weight: 800;
+  color: var(--muted);
+  margin-top: 10px;
 }
 
 #spaceship-cart {
-    width: 250px; /* Ensuring it stays big */
-    height: auto;
+  width: 420px;
+  max-width: 86%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 12px;
 }
 
-/* === Snack Grid === */
-.snack-grid-container{position:relative}
-
-.snack-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    padding: 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-    align-items: start;
-}
-
-/* === 🌟 Neon Grid Overlay (Laser-Perfect) === */
-.neon-grid-overlay {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    background-size: 100px 100px; /* Increased spacing */
-    background-image: 
-        linear-gradient(to right, rgba(255, 20, 147, 1) 2px, transparent 2px), /* Vertical Laser Lines */
-        linear-gradient(to bottom, rgba(255, 20, 147, 1) 2px, transparent 2px); /* Horizontal Laser Lines */
-}
-
-/* === Snack Item Box === */
-.snack-item {
-    background-color: #16213e;
-    padding: 12px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    max-width: 280px;
-    min-height: 260px;
-    overflow: hidden;
-    position: relative;
-}
-
-/* === Snack Item Images === */
-
-.snack-item img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 6px;
-    display: block;
-}
-
-.snack-image{width:100%;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
-.card-bottom{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;padding:6px 4px;box-sizing:border-box}
-.snack-info{flex:1}
-.snack-info .name{font-size:0.95rem;color:#fff}
-.snack-info .price{font-size:0.9rem;color:#ffd6e8}
-
-/* === Controls (Plus/Minus Buttons) === */
-.controls {
-    display:flex;
-    align-items:center;
-    gap:8px;
-}
-
-.controls button {
-    background-color: #e94560;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 1rem;
-    border-radius: 5px;
-}
-
-.controls button:hover {
-    background-color: #ff6b81;
-}
-
-.quantity {
-    margin: 0 10px;
-    font-size: 1.2rem;
-}
-
-/* === Bounce Effect for Spaceship === */
-@keyframes bounce {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-}
-
-.bounce-effect {
-    animation: bounce 0.3s ease-in-out;
-}
-
-/* Make main area accommodate sticky dock */
-main {
-  padding: 18px 20px 40px;
-  padding-bottom: 190px; /* space for the dock */
-}
-
-/* Container bar */
+/* =========================
+   Container Bar
+========================= */
 .container-bar{
-  max-width:1200px;
+  max-width: 1200px;
   margin: 0 auto 14px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px 12px;
-  align-items:center;
-  justify-content:space-between;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  align-items: center;
+  justify-content: space-between;
   padding: 12px 14px;
   border-radius: 12px;
-  background: rgba(0,0,0,0.25);
+  background: var(--panel);
   border: 1px solid rgba(255,105,180,0.25);
 }
-.container-label{font-weight:600}
+
+.container-label { font-weight: 700; }
+
 .container-select{
   min-width: 320px;
   max-width: 100%;
@@ -158,32 +83,124 @@ main {
   background: #0b0b22;
   color: #fff;
 }
+
 .container-summary{
   font-size: 0.95rem;
-  color:#ffd6e8;
-}
-.container-summary .hint{
-  opacity:0.85;
-  margin-left:10px;
-  font-size:0.85rem;
+  color: var(--muted);
 }
 
-/* IMPORTANT: snack cards are now buttons */
-.snack-item{
-  appearance:none;
-  border:none;
-  cursor:pointer;
-  text-align:left;
+.container-summary .hint{
+  opacity: 0.85;
+  margin-left: 10px;
+  font-size: 0.85rem;
 }
-.snack-item:focus{
+
+/* =========================
+   Snack Grid + Neon Overlay
+========================= */
+.snack-grid-container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.neon-grid-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-size: 100px 100px;
+  background-image:
+    linear-gradient(to right, rgba(255, 20, 147, 1) 2px, transparent 2px),
+    linear-gradient(to bottom, rgba(255, 20, 147, 1) 2px, transparent 2px);
+  opacity: 0.9;
+}
+
+.snack-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 24px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* Snack card (often rendered as a button) */
+.snack-item {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+
+  background-color: #16213e;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 100%;
+  max-width: 280px;
+  min-height: 260px;
+  overflow: hidden;
+  position: relative;
+}
+
+.snack-item:focus {
   outline: 2px solid rgba(255,105,180,0.7);
   outline-offset: 2px;
 }
 
-/* Remove old controls block visuals */
-.controls, .quantity { display:none !important; }
+.snack-item img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
 
-/* Sticky bottom dock (your “12 option boxes”) */
+.snack-image {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+  padding: 6px 4px;
+  box-sizing: border-box;
+}
+
+.snack-info { flex: 1; }
+
+.snack-info .name {
+  font-size: 0.95rem;
+  color: #fff;
+  font-weight: 800;
+}
+
+.snack-info .price {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Old +/- controls (kept “safe”, hidden) */
+.controls, .quantity { display: none !important; }
+
+/* =========================
+   Sticky Picks Dock
+========================= */
 .picks-dock{
   position: fixed;
   left: 0;
@@ -196,9 +213,16 @@ main {
   z-index: 50;
 }
 
-.picks-tray{
+.picks-dock-inner{
   max-width: 1200px;
   margin: 0 auto;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.picks-tray{
+  flex: 1;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(120px, 1fr);
@@ -212,61 +236,227 @@ main {
   border-radius: 12px;
   border: 2px solid rgba(255,105,180,0.35);
   background: rgba(0,0,0,0.25);
-  color:#fff;
+  color: #fff;
   position: relative;
   cursor: pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 10px;
 }
+
 .pick-slot.filled{
   border-color: rgba(255,105,180,0.7);
 }
+
 .pick-slot img{
   width: 100%;
   height: 78px;
   object-fit: cover;
   border-radius: 10px;
 }
+
 .slot-label{
-  position:absolute;
-  left:10px;
-  right:34px;
-  bottom:10px;
+  position: absolute;
+  left: 10px;
+  right: 34px;
+  bottom: 10px;
   font-size: 0.78rem;
   line-height: 1.1;
-  color:#ffd6e8;
+  color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .slot-x{
-  position:absolute;
-  right:10px;
-  bottom:8px;
-  width:24px;
-  height:24px;
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(233,69,96,0.9);
-  font-weight: 800;
+  font-weight: 900;
 }
+
 .slot-empty{
-  opacity:0.7;
+  opacity: 0.7;
   font-size: 0.9rem;
+}
+
+.dock-actions{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 160px;
+}
+
+.add-to-cart{
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,105,180,0.55);
+  background: rgba(233,69,96,0.95);
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.add-to-cart:hover{
+  background: rgba(255,105,180,0.95);
+}
+
+.add-to-cart:disabled{
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 /* little “full” feedback */
 .tray-nudge{
   animation: trayNudge 0.28s ease-in-out;
 }
+
 @keyframes trayNudge{
   0%{ transform: translateY(0); }
   30%{ transform: translateY(-6px); }
   60%{ transform: translateY(0); }
   85%{ transform: translateY(-3px); }
   100%{ transform: translateY(0); }
+}
+
+/* =========================
+   Cart UI
+========================= */
+.cart-fab{
+  position: fixed;
+  right: 16px;
+  top: 16px;
+  z-index: 80;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,105,180,0.45);
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  font-weight: 800;
+}
+
+.cart-modal{
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+}
+
+.cart-backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+}
+
+.cart-panel{
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: min(420px, 92vw);
+  background: #0b0b22;
+  border-left: 1px solid rgba(255,105,180,0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  border-bottom: 1px solid rgba(255,105,180,0.18);
+}
+
+.cart-title{
+  font-weight: 900;
+  color: var(--muted);
+}
+
+.cart-close{
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,105,180,0.25);
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.cart-items{
+  padding: 12px 14px;
+  overflow: auto;
+  flex: 1;
+}
+
+.cart-item{
+  border: 1px solid rgba(255,105,180,0.18);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: rgba(0,0,0,0.25);
+}
+
+.cart-item-top{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cart-item img{
+  width: 72px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.cart-item-name{ font-weight: 900; }
+.cart-item-meta{
+  opacity: 0.85;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.cart-item-remove{
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(233,69,96,0.45);
+  background: rgba(233,69,96,0.25);
+  color: #fff;
+  cursor: pointer;
+}
+
+.cart-footer{
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255,105,180,0.18);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-clear, .cart-checkout{
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,105,180,0.35);
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  cursor: pointer;
+}
+
+.cart-checkout{
+  background: rgba(255,105,180,0.85);
+  font-weight: 900;
 }

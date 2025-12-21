@@ -29,17 +29,18 @@
   <div class="page-wrap">
     <header>
       <!-- IMPORTANT: boxmaker.js animates toward this ID -->
+      <!-- JS will also swap this image based on selected container -->
       <img
         id="spaceship-cart"
-        src="images/mothership.jpg"
-        alt="Mothership"
+        src="RESOURCES/images/mothership.jpg"
+        alt="Selected container"
         style="width:420px;max-width:86%;height:auto;display:block;margin:0 auto"
       />
       <div class="title">The Pink Alien — Build Your Snack Box</div>
     </header>
 
     <main>
-            <!-- Container picker / summary bar -->
+      <!-- Container picker / summary bar -->
       <div class="container-bar">
         <label class="container-label" for="container-select">Choose your container:</label>
         <select id="container-select" class="container-select"></select>
@@ -50,23 +51,50 @@
         </div>
       </div>
 
-      <!-- Scrollable candy grid area -->
+      <!-- Scrollable candy grid area (ONLY ONE of these) -->
       <div class="snack-grid-container">
         <div class="neon-grid-overlay" aria-hidden="true"></div>
         <div id="snack-grid" class="snack-grid" aria-label="Products grid"></div>
       </div>
 
-      <!-- Sticky picks tray -->
+      <!-- Sticky bottom dock -->
       <section class="picks-dock" aria-label="Your picks">
-        <div id="picks-tray" class="picks-tray"></div>
-      </section>
+        <div class="picks-dock-inner">
+          <div id="picks-tray" class="picks-tray"></div>
 
-      <!-- IMPORTANT: boxmaker-render.js injects .snack-item cards into this element -->
-      <div class="snack-grid-container">
-        <div class="neon-grid-overlay" aria-hidden="true"></div>
-        <div id="snack-grid" class="snack-grid" aria-label="Products grid"></div>
-      </div>
+          <div class="dock-actions">
+            <button id="add-to-cart" class="add-to-cart" type="button" hidden>
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </section>
     </main>
+  </div>
+
+  <!-- Floating cart button -->
+  <button id="cart-open" class="cart-fab" type="button" aria-label="Open cart">
+    Cart (<span id="cart-count">0</span>)
+  </button>
+
+  <!-- Cart modal -->
+  <div id="cart-modal" class="cart-modal" hidden>
+    <div class="cart-backdrop" data-close="1"></div>
+
+    <div class="cart-panel" role="dialog" aria-modal="true" aria-label="Your cart">
+      <div class="cart-header">
+        <div class="cart-title">Your Cart</div>
+        <button id="cart-close" class="cart-close" type="button" aria-label="Close cart">×</button>
+      </div>
+
+      <div id="cart-items" class="cart-items"></div>
+
+      <div class="cart-footer">
+        <div>Total: $<span id="cart-total">0.00</span></div>
+        <button id="cart-clear" class="cart-clear" type="button">Clear</button>
+        <button id="cart-checkout" class="cart-checkout" type="button">Checkout</button>
+      </div>
+    </div>
   </div>
 
   <!-- IMPORTANT: load boxmaker.js first (defines window.boxmakerInit),
