@@ -280,40 +280,43 @@ function initBoxmaker() {
     containers = Array.isArray(window.containers) ? window.containers : [];
   }
 
-  function renderContainerOptions(savedId) {
-    if (!containerSelect) return;
+function renderContainerOptions(savedId) {
+  if (!containerSelect) return;
 
-    // Build options first
-    containerSelect.innerHTML = containers
-      .map((c) => {
-        const name = c.name || "Container";
-        const weight = c.weight || "";
-        const price = Number(c.price || 0).toFixed(2);
-        const mp = typeof c.maxPicks === "number" ? c.maxPicks : maxPicks;
-        const label = `${name} • ${weight} • $${price} • ${mp} picks`;
-        return `<option value="${escHtml(c.id)}">${escHtml(label)}</option>`;
-      })
-      .join("");
+  // Build options with a placeholder first
+  containerSelect.innerHTML = `
+    <option value="" disabled selected>Pick a container here!</option>
+    ${containers.map(c => {
+      const label = `${c.name} • ${c.weight} • $${Number(c.price).toFixed(2)} • ${c.maxPicks} picks`;
+      return `<option value="${c.id}">${label}</option>`;
+    }).join('')}
+  `;
 
-    // Select initial container
-    const initialId =
-      savedId && containers.some((c) => c.id === savedId)
-        ? savedId
-        : containers[0]?.id || "";
+  // If user previously picked a container, restore it
+  if (savedId && containers.some(c => c.id === savedId)) {
+    containerSelect.value = savedId;
 
-    if (initialId) containerSelect.value = initialId;
-
-    // Apply container effects on load
-    setMaxPicksFromContainer(containerSelect.value);
-    setHeaderImageFromContainer(containerSelect.value);
-
-    // Ensure only ONE change listener
-    containerSelect.onchange = () => {
-      setMaxPicksFromContainer(containerSelect.value);
-      setHeaderImageFromContainer(containerSelect.value);
-      saveState();
-    };
+    // Apply container effects immediately when restoring
+    setMaxPicksFromContainer(savedId);
+    setHeaderImageFromContainer(savedId);
+  } else {
+    // No container chosen yet — defaults stay
+    maxPicks = 12;
+    if (picksMaxEl) picksMaxEl.textContent = String(maxPicks);
+    updateAddToCartVisibility();
   }
+
+  // When user actually picks a container
+  containerSelect.addEventListener('change', () => {
+    const selectedId = containerSelect.value;
+    if (!selectedId) return;
+
+    setMaxPicksFromContainer(selectedId);
+    setHeaderImageFromContainer(selectedId);
+    saveState();
+  });
+}
+
 
   // ---------- Picks tray ----------
   function renderPickSlots() {
