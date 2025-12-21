@@ -6,7 +6,9 @@
     "weight": "1lb.",
     "price": 20.00,
     "maxPicks": 6,
-    "includeSides": true
+    "includeSides": true,
+    "sidesSrc": "images/sides/bento-sides.jpeg",
+    "sidesAlt": "Includes sides: Pocky + Ramune"
   },
   {
     "id": "ramen-bowl",
@@ -15,7 +17,9 @@
     "weight": "1lb.",
     "price": 20.00,
     "maxPicks": 6,
-    "includeSides": true
+    "includeSides": true,
+    "sidesSrc": "images/sides/bento-sides.jpeg",
+    "sidesAlt": "Includes sides: Pocky + Ramune"
   },
   {
     "id": "green-bag",
@@ -24,7 +28,9 @@
     "weight": "2lb.",
     "price": 34.00,
     "maxPicks": 12,
-    "includeSides": false
+    "includeSides": false,
+    "sidesSrc": null,
+    "sidesAlt": null
   },
   {
     "id": "claw-machine-bag",
@@ -33,7 +39,9 @@
     "weight": "1lb.",
     "price": 17.00,
     "maxPicks": 6,
-    "includeSides": false
+    "includeSides": false,
+    "sidesSrc": null,
+    "sidesAlt": null
   },
   {
     "id": "silver-bag",
@@ -42,6 +50,8 @@
     "weight": "1/2lb.",
     "price": 10.00,
     "maxPicks": 3,
-    "includeSides": false
+    "includeSides": false,
+    "sidesSrc": null,
+    "sidesAlt": null
   }
 ]

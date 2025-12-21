@@ -114,14 +114,30 @@ function initBoxmaker() {
     return containers.find(c => c.id === id) || null;
   }
 
-  // A stable signature to detect duplicate “same container + same picks”
-  // NOTE: This does NOT affect the draft; only cart merging.
+  // ---- Editing state (which cart item index is being edited?) ----
+  function getEditingIndex() {
+    const raw = localStorage.getItem('pinkAlien_editIndex');
+    if (raw === null) return null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  }
+  function setEditingIndex(i) {
+    if (i === null || i === undefined) localStorage.removeItem('pinkAlien_editIndex');
+    else localStorage.setItem('pinkAlien_editIndex', String(i));
+  }
+
+  // ---- Stable signature to detect duplicate “same container + same picks” ----
+  function pickKey(p) {
+    // Your "IMG_3173" style values are often stored in name, not id.
+    return (p?.id || p?.name || p?.src || '').trim();
+  }
+
   function cartSignature(containerId, picksArr) {
-    const ids = (Array.isArray(picksArr) ? picksArr : [])
-      .map(p => p?.id || '')
+    const keys = (Array.isArray(picksArr) ? picksArr : [])
+      .map(pickKey)
       .filter(Boolean)
-      .sort(); // order-insensitive match
-    return `${containerId}::${ids.join('|')}`;
+      .sort(); // order-insensitive
+    return `${containerId}::${keys.join('|')}`;
   }
 
   function renderCart() {
@@ -169,6 +185,11 @@ function initBoxmaker() {
         const next = loadCart();
         next.splice(i, 1);
         saveCart(next);
+
+        // If user removed the item currently being edited, exit edit mode
+        const editIndex = getEditingIndex();
+        if (editIndex === i) setEditingIndex(null);
+
         renderCart();
       });
     });
@@ -180,6 +201,9 @@ function initBoxmaker() {
         const item = cartNow[i];
         if (!item) return;
 
+        // ✅ mark that we are editing THIS cart item
+        setEditingIndex(i);
+
         // Load the builder state from the cart item
         if (containerSelect) containerSelect.value = item.containerId || '';
 
@@ -188,7 +212,6 @@ function initBoxmaker() {
         setSidesPreviewFromContainer(item.containerId || '');
 
         picks = Array.isArray(item.picks) ? item.picks.map(p => ({ ...p })) : [];
-        // Trim just in case container changed and is smaller
         if (picks.length > maxPicks) picks = picks.slice(0, maxPicks);
 
         updateCount();
@@ -198,7 +221,6 @@ function initBoxmaker() {
 
         closeCart();
 
-        // optional: bring user back to the top where the container preview is
         try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch {}
       });
     });
@@ -221,12 +243,18 @@ function initBoxmaker() {
       if (e.target?.dataset?.close) closeCart();
     });
   }
+
+  // ✅ Confirm before clearing cart
   if (cartClearBtn) {
     cartClearBtn.addEventListener('click', () => {
+      const ok = window.confirm('Are you sure you want to clear the cart?');
+      if (!ok) return;
       saveCart([]);
+      setEditingIndex(null);
       renderCart();
     });
   }
+
   if (cartCheckoutBtn) {
     cartCheckoutBtn.addEventListener('click', () => {
       alert('Checkout coming soon 🙂 (this is where Stripe/Wix checkout would hook in)');
@@ -252,14 +280,35 @@ function initBoxmaker() {
         picks: [...picks]
       };
 
-      // ---- MERGE DUPLICATES IN CART ONLY ----
-      const sig = cartSignature(newItem.containerId, newItem.picks);
-      const existingIdx = cart.findIndex(it => cartSignature(it.containerId, it.picks) === sig);
+      const editIndex = getEditingIndex();
 
-      if (existingIdx >= 0) {
-        cart[existingIdx].qty = (cart[existingIdx].qty || 1) + 1;
+      if (editIndex !== null && cart[editIndex]) {
+        // ✅ UPDATE existing cart line item (keep its qty)
+        const existingQty = cart[editIndex].qty || 1;
+        cart[editIndex] = { ...newItem, qty: existingQty };
+
+        // Clear editing mode after applying update
+        setEditingIndex(null);
+
+        // ✅ If edited item became identical to another item, merge them
+        const sig = cartSignature(cart[editIndex].containerId, cart[editIndex].picks);
+        for (let j = cart.length - 1; j >= 0; j--) {
+          if (j === editIndex) continue;
+          if (cartSignature(cart[j].containerId, cart[j].picks) === sig) {
+            cart[editIndex].qty = (cart[editIndex].qty || 1) + (cart[j].qty || 1);
+            cart.splice(j, 1);
+          }
+        }
       } else {
-        cart.push(newItem);
+        // ✅ NORMAL add: merge duplicates by bumping qty
+        const sig = cartSignature(newItem.containerId, newItem.picks);
+        const existingIdx = cart.findIndex(it => cartSignature(it.containerId, it.picks) === sig);
+
+        if (existingIdx >= 0) {
+          cart[existingIdx].qty = (cart[existingIdx].qty || 1) + 1;
+        } else {
+          cart.push(newItem);
+        }
       }
 
       saveCart(cart);
@@ -344,35 +393,32 @@ function initBoxmaker() {
 
     containerSelect.innerHTML = placeholder + options;
 
-    // Decide initial selection:
-    // - If there’s a savedId that matches a container, use it
-    // - Otherwise default to placeholder ("")
     const validSaved = savedId && containers.some(c => c.id === savedId);
     containerSelect.value = validSaved ? savedId : '';
 
-    // Apply initial state
     if (containerSelect.value) {
       setMaxPicksFromContainer(containerSelect.value);
       setHeaderImageFromContainer(containerSelect.value);
       setSidesPreviewFromContainer(containerSelect.value);
     } else {
-      // placeholder mode: lock picks + keep mothership image
       maxPicks = 0;
       picks = [];
-      setSidesPreviewFromContainer(''); // hide
+      setSidesPreviewFromContainer('');
       updateCount();
       renderPickSlots();
       updateAddToCartVisibility();
     }
 
-    // On change: if placeholder, lock; else apply container
     containerSelect.addEventListener('change', () => {
       const id = containerSelect.value || '';
+
+      // Changing container should exit editing mode (prevents accidental overwrites)
+      setEditingIndex(null);
 
       if (!id) {
         maxPicks = 0;
         picks = [];
-        setSidesPreviewFromContainer(''); // hide
+        setSidesPreviewFromContainer('');
         updateCount();
         renderPickSlots();
         updateAddToCartVisibility();
@@ -392,7 +438,6 @@ function initBoxmaker() {
 
     picksTray.innerHTML = '';
 
-    // If locked (no container), show some empty boxes as a hint
     const slotsToShow = Math.max(maxPicks, 6);
 
     for (let i = 0; i < slotsToShow; i++) {
@@ -416,7 +461,7 @@ function initBoxmaker() {
       }
 
       slot.addEventListener('click', () => {
-        if (maxPicks <= 0) return; // locked
+        if (maxPicks <= 0) return;
         const idx = Number(slot.dataset.index);
         if (!picks[idx]) return;
 
@@ -442,7 +487,6 @@ function initBoxmaker() {
     const card = e.target.closest('.snack-item');
     if (!card) return;
 
-    // Must choose container first
     if (maxPicks <= 0) {
       trayNudge();
       return;
@@ -454,7 +498,7 @@ function initBoxmaker() {
     }
 
     const pick = {
-      id: card.dataset.id || '',
+      id: (card.dataset.id || card.dataset.name || card.dataset.src || '').trim(),
       name: card.dataset.name || 'Candy',
       src: card.dataset.src || card.querySelector('img')?.src || ''
     };
@@ -465,7 +509,6 @@ function initBoxmaker() {
     saveState();
     updateAddToCartVisibility();
 
-    // animate candy to mothership/container image
     const img = card.querySelector('img');
     if (img && spaceshipCart) animateToCart(img, spaceshipCart);
   });
@@ -508,7 +551,7 @@ function initBoxmaker() {
   // ---- Boot ----
   (async function boot() {
     await loadContainers();
-    ensureSidesPreviewEl(); // create/hook sides preview early
+    ensureSidesPreviewEl();
     const savedId = restoreState();
     renderContainerOptions(savedId);
     renderPickSlots();
