@@ -22,13 +22,76 @@ function initBoxmaker() {
   const cartCheckoutBtn = document.getElementById('cart-checkout');
 
   let containers = [];
-  let maxPicks = 0; // 👈 start locked until container chosen
+  let maxPicks = 0; // locked until container chosen
   let picks = [];   // array of {id,name,src}
+
+  // ---- Sides preview (auto-created) ----
+  let sidesPreviewEl = null;
 
   function normalizeSrc(src = '') {
     if (src.startsWith('RESOURCES/images/')) src = src.replace(/^RESOURCES\/images\//, 'images/');
     src = src.replace('RESOURCES/images', 'images');
     return src;
+  }
+
+  function ensureSidesPreviewEl() {
+    if (!spaceshipCart) return null;
+    if (sidesPreviewEl && sidesPreviewEl.isConnected) return sidesPreviewEl;
+
+    // Try to find existing element first
+    let existing = document.getElementById('sides-preview');
+    if (existing) {
+      sidesPreviewEl = existing;
+      return sidesPreviewEl;
+    }
+
+    // Create one next to the container image
+    const wrap = spaceshipCart.parentElement || spaceshipCart;
+    const img = document.createElement('img');
+    img.id = 'sides-preview';
+    img.alt = 'Sides preview';
+    img.hidden = true;
+    img.style.display = 'block';
+    img.style.maxWidth = '160px';
+    img.style.height = 'auto';
+    img.style.marginLeft = '12px';
+
+    // If parent is not flex, we still append; CSS later can make it perfect.
+    wrap.appendChild(img);
+
+    sidesPreviewEl = img;
+    return sidesPreviewEl;
+  }
+
+  function setSidesPreviewFromContainer(containerId) {
+    const el = ensureSidesPreviewEl();
+    if (!el) return;
+
+    if (!containerId) {
+      el.hidden = true;
+      el.removeAttribute('src');
+      return;
+    }
+
+    const c = containers.find(x => x.id === containerId);
+    if (!c || !c.includeSides) {
+      el.hidden = true;
+      el.removeAttribute('src');
+      return;
+    }
+
+    // Recommended: put sidesSrc + sidesAlt on the container object in containers.json
+    const sidesSrc = normalizeSrc(c.sidesSrc || '');
+    if (!sidesSrc) {
+      // includeSides true, but no image provided yet
+      el.hidden = true;
+      el.removeAttribute('src');
+      return;
+    }
+
+    el.src = sidesSrc;
+    el.alt = c.sidesAlt || 'Sides included';
+    el.hidden = false;
   }
 
   function updateAddToCartVisibility() {
@@ -51,6 +114,16 @@ function initBoxmaker() {
     return containers.find(c => c.id === id) || null;
   }
 
+  // A stable signature to detect duplicate “same container + same picks”
+  // NOTE: This does NOT affect the draft; only cart merging.
+  function cartSignature(containerId, picksArr) {
+    const ids = (Array.isArray(picksArr) ? picksArr : [])
+      .map(p => p?.id || '')
+      .filter(Boolean)
+      .sort(); // order-insensitive match
+    return `${containerId}::${ids.join('|')}`;
+  }
+
   function renderCart() {
     const cart = loadCart();
     const count = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
@@ -63,19 +136,27 @@ function initBoxmaker() {
       const line = (item.price || 0) * (item.qty || 1);
       total += line;
 
+      const qty = item.qty || 1;
+      const picksText = Array.isArray(item.picks) ? item.picks.map(p => p.name).join(', ') : '';
+
       return `
         <div class="cart-item">
           <div class="cart-item-top">
             <img src="${item.containerSrc}" alt="${item.containerName}">
             <div>
-              <div class="cart-item-name">${item.containerName} × ${item.qty || 1}</div>
+              <div class="cart-item-name">${item.containerName} <span style="opacity:.9">× ${qty}</span></div>
               <div class="cart-item-meta">${item.picks?.length || 0} picks • $${Number(item.price || 0).toFixed(2)}</div>
             </div>
           </div>
+
           <div class="cart-item-meta" style="margin-top:8px">
-            ${Array.isArray(item.picks) ? item.picks.map(p => p.name).join(', ') : ''}
+            ${picksText}
           </div>
-          <button class="cart-item-remove" type="button" data-remove="${idx}">Remove</button>
+
+          <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap">
+            <button class="cart-item-edit" type="button" data-edit="${idx}">Edit box</button>
+            <button class="cart-item-remove" type="button" data-remove="${idx}">Remove</button>
+          </div>
         </div>
       `;
     }).join('');
@@ -89,6 +170,36 @@ function initBoxmaker() {
         next.splice(i, 1);
         saveCart(next);
         renderCart();
+      });
+    });
+
+    cartItemsEl.querySelectorAll('[data-edit]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = Number(btn.getAttribute('data-edit'));
+        const cartNow = loadCart();
+        const item = cartNow[i];
+        if (!item) return;
+
+        // Load the builder state from the cart item
+        if (containerSelect) containerSelect.value = item.containerId || '';
+
+        setMaxPicksFromContainer(item.containerId || '');
+        setHeaderImageFromContainer(item.containerId || '');
+        setSidesPreviewFromContainer(item.containerId || '');
+
+        picks = Array.isArray(item.picks) ? item.picks.map(p => ({ ...p })) : [];
+        // Trim just in case container changed and is smaller
+        if (picks.length > maxPicks) picks = picks.slice(0, maxPicks);
+
+        updateCount();
+        renderPickSlots();
+        saveState();
+        updateAddToCartVisibility();
+
+        closeCart();
+
+        // optional: bring user back to the top where the container preview is
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch {}
       });
     });
   }
@@ -132,19 +243,29 @@ function initBoxmaker() {
 
       const cart = loadCart();
 
-      cart.push({
+      const newItem = {
         containerId: c.id,
         containerName: c.name,
         containerSrc: normalizeSrc(c.src || ''),
         price: Number(c.price || 0),
         qty: 1,
         picks: [...picks]
-      });
+      };
+
+      // ---- MERGE DUPLICATES IN CART ONLY ----
+      const sig = cartSignature(newItem.containerId, newItem.picks);
+      const existingIdx = cart.findIndex(it => cartSignature(it.containerId, it.picks) === sig);
+
+      if (existingIdx >= 0) {
+        cart[existingIdx].qty = (cart[existingIdx].qty || 1) + 1;
+      } else {
+        cart.push(newItem);
+      }
 
       saveCart(cart);
       renderCart();
 
-      // clear picks after adding
+      // clear draft picks after adding
       picks = [];
       updateCount();
       renderPickSlots();
@@ -233,10 +354,12 @@ function initBoxmaker() {
     if (containerSelect.value) {
       setMaxPicksFromContainer(containerSelect.value);
       setHeaderImageFromContainer(containerSelect.value);
+      setSidesPreviewFromContainer(containerSelect.value);
     } else {
       // placeholder mode: lock picks + keep mothership image
       maxPicks = 0;
       picks = [];
+      setSidesPreviewFromContainer(''); // hide
       updateCount();
       renderPickSlots();
       updateAddToCartVisibility();
@@ -249,6 +372,7 @@ function initBoxmaker() {
       if (!id) {
         maxPicks = 0;
         picks = [];
+        setSidesPreviewFromContainer(''); // hide
         updateCount();
         renderPickSlots();
         updateAddToCartVisibility();
@@ -258,6 +382,7 @@ function initBoxmaker() {
 
       setMaxPicksFromContainer(id);
       setHeaderImageFromContainer(id);
+      setSidesPreviewFromContainer(id);
       saveState();
     });
   }
@@ -383,6 +508,7 @@ function initBoxmaker() {
   // ---- Boot ----
   (async function boot() {
     await loadContainers();
+    ensureSidesPreviewEl(); // create/hook sides preview early
     const savedId = restoreState();
     renderContainerOptions(savedId);
     renderPickSlots();
