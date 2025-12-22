@@ -100,6 +100,42 @@ function initBoxmaker() {
     addToCartBtn.hidden = !isFull;
   }
 
+  function buildOrderPayload() {
+    const cart = loadCart();
+
+    // Build normalized line items
+    const items = cart.map(it => {
+        const qty = Number(it.qty || 1);
+
+        // NOTE: if you ever add per-candy prices later, this structure still works.
+        const unitPrice = Number(it.price || 0);
+
+        const picks = Array.isArray(it.picks) ? it.picks.map(p => ({
+        id: (p.id || p.name || p.src || '').trim(),
+        name: p.name || '',
+        src: p.src || ''
+        })) : [];
+
+        return {
+        containerId: it.containerId || '',
+        name: it.containerName || '',
+        unitPrice: Number(unitPrice.toFixed(2)),
+        qty,
+        picks
+        };
+    });
+
+  const total = items.reduce((sum, it) => sum + (it.unitPrice * it.qty), 0);
+
+  return {
+    currency: "usd",
+    total: Number(total.toFixed(2)),
+    items,
+    createdAt: new Date().toISOString()
+  };
+}
+
+
   function loadCart() {
     try { return JSON.parse(localStorage.getItem('pinkAlien_cart') || '[]') || []; }
     catch { return []; }
