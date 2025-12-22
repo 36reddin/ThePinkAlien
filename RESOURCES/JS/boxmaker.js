@@ -180,19 +180,34 @@ function initBoxmaker() {
     cartTotalEl.textContent = total.toFixed(2);
 
     cartItemsEl.querySelectorAll('[data-remove]').forEach(btn => {
-      btn.addEventListener('click', () => {
+    btn.addEventListener('click', () => {
         const i = Number(btn.getAttribute('data-remove'));
         const next = loadCart();
+        const item = next[i];
+        if (!item) return;
+
+        if ((item.qty || 1) > 1) {
+        // ✅ decrement qty
+        item.qty = (item.qty || 1) - 1;
+        next[i] = item;
+        } else {
+        // ✅ remove line item
         next.splice(i, 1);
-        saveCart(next);
 
-        // If user removed the item currently being edited, exit edit mode
+        // Keep editing index valid after removing a row
         const editIndex = getEditingIndex();
-        if (editIndex === i) setEditingIndex(null);
+        if (editIndex === i) {
+            setEditingIndex(null);
+        } else if (editIndex !== null && editIndex > i) {
+            setEditingIndex(editIndex - 1);
+        }
+        }
 
+        saveCart(next);
         renderCart();
-      });
     });
+    });
+
 
     cartItemsEl.querySelectorAll('[data-edit]').forEach(btn => {
       btn.addEventListener('click', () => {
