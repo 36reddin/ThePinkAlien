@@ -609,6 +609,8 @@ function initBoxmaker() {
     updateCount();
     updateAddToCartVisibility();
     renderCart();
+    console.log('ORDER PAYLOAD:', buildOrderPayload());
+
   })();
 }
 
